@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+<TableLayout
+    android:layout_gravity="center_horizontal"
+    android:layout_width="@dimen/talbe_width"
+    android:layout_height="@dimen/talbe_height"
+    android:background="@drawable/grid5">
+
+    <TableRow>
+        <com.jeff.alphamao.MyImageView
+            android:id="@+id/cell_0"
+            android:layout_width="@dimen/cell_width"
+            android:layout_height="@dimen/cell_heigth"
+            android:src="@drawable/blank"/>
+        <com.jeff.alphamao.MyImageView
+            android:id="@+id/cell_1"
+            android:layout_width="@dimen/cell_width"
+            android:layout_height="@dimen/cell_heigth"
+            android:src="@drawable/blank"/>
+        <com.jeff.alphamao.MyImageView
+            android:id="@+id/cell_2"
+            android:layout_width="@dimen/cell_width"
+            android:layout_height="@dimen/cell_heigth"
+            android:src="@drawable/blank"/>
+        <com.jeff.alphamao.MyImageView
+            android:id="@+id/cell_3"
+            android:layout_width="@dimen/cell_width"
+            android:layout_height="@dimen/cell_heigth"
+            android:src="@drawable/blank"/>
+        <com.jeff.alphamao.MyImageView
+            android:id="@+id/cell_4"
+            android:layout_width="@dimen/cell_width"
+            android:layout_height="@dimen/cell_heigth"
+            android:src="@drawable/blank"/>
+    </TableRow>
+
+    <TableRow>
+        <com.jeff.alphamao.MyImageView
+            android:id="@+id/cell_5"
+            android:layout_width="@dimen/cell_width"
+            android:layout_height="@dimen/cell_heigth"
+            android:src="@drawable/blank"/>
+        <com.jeff.alphamao.MyImageView
+            android:id="@+id/cell_6"
+            android:layout_width="@dimen/cell_width"
+            android:layout_height="@dimen/cell_heigth"
+            android:src="@drawable/blank"/>
+        <com.jeff.alphamao.MyImageView
+            android:id="@+id/cell_7"
+            android:layout_width="@dimen/cell_width"
+            android:layout_height="@dimen/cell_heigth"
+            android:src="@drawable/blank"/>
+        <com.jeff.alphamao.MyImageView
+            android:id="@+id/cell_8"
+            android:layout_width="@dimen/cell_width"
+            android:layout_height="@dimen/cell_heigth"
+            android:src="@drawable/blank"/>
+        <com.jeff.alphamao.MyImageView
+            android:id="@+id/cell_9"
+            android:layout_width="@dimen/cell_width"
+            android:layout_height="@dimen/cell_heigth"
+            android:src="@drawable/blank"/>
+    </TableRow>
+
+    <TableRow>
+        <com.jeff.alphamao.MyImageView
+            android:id="@+id/cell_10"
+            android:layout_width="@dimen/cell_width"
+            android:layout_height="@dimen/cell_heigth"
+            android:src="@drawable/blank"/>
+        <com.jeff.alphamao.MyImageView
+            android:id="@+id/cell_11"
+            android:layout_width="@dimen/cell_width"
+            android:layout_height="@dimen/cell_heigth"
+            android:src="@drawable/blank"/>
+        <com.jeff.alphamao.MyImageView
+            android:id="@+id/cell_12"
+            android:layout_width="@dimen/cell_width"
+            android:layout_height="@dimen/cell_heigth"
+            android:src="@drawable/blank"/>
+        <com.jeff.alphamao.MyImageView
+            android:id="@+id/cell_13"
+            android:layout_width="@dimen/cell_width"
+            android:layout_height="@dimen/cell_heigth"
+            android:src="@drawable/blank"/>
+        <com.jeff.alphamao.MyImageView
+            android:id="@+id/cell_14"
+            android:layout_width="@dimen/cell_width"
+            android:layout_height="@dimen/cell_heigth"
+            android:src="@drawable/blank"/>
+    </TableRow>
+
+    <TableRow>
+        <com.jeff.alphamao.MyImageView
+            android:id="@+id/cell_15"
+            android:layout_width="@dimen/cell_width"
+            android:layout_height="@dimen/cell_heigth"
+            android:src="@drawable/blank"/>
+        <com.jeff.alphamao.MyImageView
+            android:id="@+id/cell_16"
+            android:layout_width="@dimen/cell_width"
+            android:layout_height="@dimen/cell_heigth"
+            android:src="@drawable/blank"/>
+        <com.jeff.alphamao.MyImageView
+            android:id="@+id/cell_17"
+            android:layout_width="@dimen/cell_width"
+            android:layout_height="@dimen/cell_heigth"
+            android:src="@drawable/blank"/>
+        <com.jeff.alphamao.MyImageView
+            android:id="@+id/cell_18"
+            android:layout_width="@dimen/cell_width"
+            android:layout_height="@dimen/cell_heigth"
+            android:src="@drawable/blank"/>
+        <com.jeff.alphamao.MyImageView
+            android:id="@+id/cell_19"
+            android:layout_width="@dimen/cell_width"
+            android:layout_height="@dimen/cell_heigth"
+            android:src="@drawable/blank"/>
+    </TableRow>
+
+    <TableRow>
+        <com.jeff.alphamao.MyImageView
+            android:id="@+id/cell_20"
+            android:layout_width="@dimen/cell_width"
+            android:layout_height="@dimen/cell_heigth"
+            android:src="@drawable/blank"/>
+        <com.jeff.alphamao.MyImageView
+            android:id="@+id/cell_21"
+            android:layout_width="@dimen/cell_width"
+            android:layout_height="@dimen/cell_heigth"
+            android:src="@drawable/blank"/>
+        <com.jeff.alphamao.MyImageView
+            android:id="@+id/cell_22"
+            android:layout_width="@dimen/cell_width"
+            android:layout_height="@dimen/cell_heigth"
+            android:src="@drawable/blank"/>
+        <com.jeff.alphamao.MyImageView
+            android:id="@+id/cell_23"
+            android:layout_width="@dimen/cell_width"
+            android:layout_height="@dimen/cell_heigth"
+            android:src="@drawable/blank"/>
+        <com.jeff.alphamao.MyImageView
+            android:id="@+id/cell_24"
+            android:layout_width="@dimen/cell_width"
+            android:layout_height="@dimen/cell_heigth"
+            android:src="@drawable/blank"/>
+    </TableRow>
+
+</TableLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        />
+
+    <Button
+        android:id="@+id/reset"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="reset"
+        />
+
+    <Switch
+        android:id="@+id/black_first"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Black First "
+        android:layout_gravity="end"
+        android:textAlignment="textEnd"/>
+
+</LinearLayout>
