@@ -1,5 +1,7 @@
 package com.jeff.alphamao;
 
+import android.widget.Toast;
+
 import java.util.Random;
 
 /**
@@ -9,115 +11,48 @@ import java.util.Random;
 public class Robot {
 
     private static final int BLANK = 0;
-    private static final int CROSS = 1;
-    private static final int CIRCLE = 2;
     private static final int BLACK = 3;
     private static final int WHITE = 4;
 
-    private static final int USER_WIN = -1;
-    private static final int USER_LOSS = -2;
-    private static final int CAN_NOT_JUDGE = -3;
+    private static final int WIN = -1;
+    private static final int LOSS = -2;
+    private static final int NOT_SURE = -3;
     private static final int DRAW = -4;
+    private static final int NOT_FOUND = -5;
 
     private String name;
     private int symbol;
-    private int depth;
+    private int chessboardSize;
 
-    public Robot(String name, int symbol, int depth) {
+    public Robot(String name, int symbol, int chessboardSize) {
         this.name = name;
         this.symbol = symbol;
-        this.depth = depth;
+        this.chessboardSize = chessboardSize;
     }
 
-    public int DFS(int symbol, int[] chessboard, int depth) {
+    public int placeNextPiece(int symbol, int[] chessboard) {
         int theOtherSymbol = symbol == WHITE? BLACK : WHITE;
-        int blankCounter = 0;
+        int nextPiece = NOT_FOUND;
 
-        for(int i = 0; i < 25; i++) {
-            if(chessboard[i] == BLANK)
-                ++blankCounter;
-        }
+        if((nextPiece = searchPieceCanWin(chessboard, symbol))
+                != NOT_FOUND) return nextPiece;
 
-        for(int i = 0; i < 25; i++) {
-            if(chessboard[i] == BLANK) {
-                chessboard[i] = symbol;
-                int[] copyChessboard = chessboard.clone();
-                if(isWin(symbol, copyChessboard))
-                    return i;
-                chessboard[i] = BLANK;
-            }
-        }
+        if((nextPiece = searchPieceCanWin(chessboard, theOtherSymbol))
+                != NOT_FOUND) return nextPiece;
 
-        for(int i = 0; i < 25; i++) {
-            if(chessboard[i] == BLANK) {
-                chessboard[i] = theOtherSymbol;
-                int[] copyChessboard = chessboard.clone();
-                if(isWin(theOtherSymbol, copyChessboard))
-                    return i;
-                chessboard[i] = BLANK;
-            }
-        }
+        if((nextPiece = tryToPickTheBestPiece(chessboard, symbol))
+                != NOT_FOUND) return nextPiece;
 
-        if(blankCounter < 9) {
-            for (int i = 0; i < 25; i++) {
-                if (chessboard[i] == BLANK) {
-                    chessboard[i] = symbol;
-                    int[] copyChessboard = chessboard.clone();
-                    if (canWin(symbol, copyChessboard, depth))
-                        return i;
-                    chessboard[i] = BLANK;
-                }
-            }
-        }
-
-        Random random = new Random();
-
-        for(int i = 0; i < 50; i++) {
-            int temp = random.nextInt(24);
-            if(chessboard[temp] == BLANK)
-                return temp;
-        }
-
-        for(int i = 0; i < 25; i++) {
-            if(chessboard[i] == BLANK)
-                return i;
-        }
-
-        return DRAW;
+        return nextPiece;
     }
 
-
-
-    private boolean canWin(int symbol, int[] chessboard, int depth) {
-        --depth;
-        if(depth < 0) return false;
-
-        int theOtherSymbol = symbol == WHITE? BLACK : WHITE;
-        if(isWin(symbol, chessboard)) return true;
-
-        while(true) {
-            int nextStep = DFS(theOtherSymbol, chessboard, depth);
-            if(nextStep == DRAW) return false;
-            chessboard[nextStep] = theOtherSymbol;
-            if(isWin(theOtherSymbol, chessboard)) return false;
-
-            nextStep = DFS(symbol, chessboard, depth);
-            if(nextStep == DRAW) return false;
-            chessboard[nextStep] = symbol;
-            if(isWin(symbol, chessboard)) return true;
-        }
-    }
-
-    public int judge(int[] chessboard) {
-        if(isWin(BLACK, chessboard)) return USER_WIN;
-        if(isWin(WHITE, chessboard)) return USER_LOSS;
-
-        for(int i = 0; i < 25; i++) {
+    public int judge(int[] chessboard, int symbol) {
+        if(isWin(symbol, chessboard)) return WIN;
+        for(int i = 0; i < chessboardSize; i++) {
             if(chessboard[i] == BLANK) break;
-            if(i == 24) return DRAW;
+            if(i == chessboardSize-1) return DRAW;
         }
-
-        return CAN_NOT_JUDGE;
+        return NOT_SURE;
     }
 
     private boolean isWin(int symbol, int[] chessboard) {
@@ -158,6 +93,87 @@ public class Robot {
         return false;
     }
 
+    private int searchPieceCanWin(int[] chessboard, int symbol){
+        int piece = NOT_FOUND;
+        for(int i = 0; i < chessboardSize; i++) {
+            if(chessboard[i] == BLANK) {
+                chessboard[i] = symbol;
+                int[] copyChessboard = chessboard.clone();
+                if(isWin(symbol, copyChessboard)){
+                    piece = i;
+                    break;
+                }
+                chessboard[i] = BLANK;
+            }
+        }
+        return piece;
+    }
+
+    private int tryToPickTheBestPiece(int[] chessboard, int symbol) {
+        int bestPiece = NOT_FOUND;
+        int bestScore = -1;
+        for(int i = 0; i < chessboardSize; i++) {
+            if(chessboard[i] == BLANK) {
+                int score = calculatePieceScore(chessboard, i, symbol);
+                if(score > bestScore) {
+                    bestPiece = i;
+                    bestScore = score;
+                }
+            }
+        }
+        return bestPiece;
+    }
+
+    private int calculatePieceScore(int[] chessboard, int pieceIndex, int symbol) {
+        int theOtherSymbol = (symbol == WHITE)? BLACK : WHITE;
+        int score = 0;
+        int rowFirstIndex = (pieceIndex/5)*5;
+        int col = pieceIndex-rowFirstIndex;
+
+        int symbolCounter = 0;
+        for(int i = 0; i < 5; i++) {
+            int temp = chessboard[rowFirstIndex+i];
+            if(temp == theOtherSymbol) break;
+            if(temp == symbol) ++symbolCounter;
+            if(i == 4) {
+                score += symbolCounter+1;
+            }
+        }
+
+        symbolCounter = 0;
+        for(int i = 0; i < 5; i++) {
+            int temp = chessboard[col+i*5];
+            if(temp == theOtherSymbol) break;
+            if(temp == symbol) ++symbolCounter;
+            if(i == 4) {
+                score += symbolCounter+1;
+            }
+        }
+
+        if(pieceIndex == 12) {
+            symbolCounter = 0;
+            for(int i = 0; i < 5; i++) {
+                int temp = chessboard[i*6];
+                if(temp == theOtherSymbol) break;
+                if(temp == symbol) ++symbolCounter;
+                if(i == 4) {
+                    score += symbolCounter+1;
+                }
+            }
+
+            symbolCounter = 0;
+            for(int i = 0; i < 5; i++) {
+                int temp = chessboard[4+i*4];
+                if(temp == theOtherSymbol) break;
+                if(temp == symbol) ++symbolCounter;
+                if(i == 4) {
+                    score += symbolCounter+1;
+                }
+            }
+        }
+        return score;
+    }
+
     public String getName() {
         return name;
     }
@@ -166,5 +182,4 @@ public class Robot {
         return symbol;
     }
 
-    public int getDepth() { return depth;}
 }
