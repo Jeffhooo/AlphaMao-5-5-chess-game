@@ -12,15 +12,14 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
 
     private static final int BLANK = 0;
-    private static final int CROSS = 1;
-    private static final int CIRCLE = 2;
     private static final int BLACK = 3;
     private static final int WHITE = 4;
 
-    private static final int USER_WIN = -1;
-    private static final int USER_LOSS = -2;
-    private static final int CAN_NOT_JUDGE = -3;
+    private static final int WIN = -1;
+    private static final int LOSS = -2;
+    private static final int NOT_SURE = -3;
     private static final int DRAW = -4;
+    private static final int NOT_FOUND = -5;
 
     private static final int CELL_0 = R.id.cell_0;
     private static final int CELL_1 = R.id.cell_1;
@@ -79,8 +78,7 @@ public class MainActivity extends AppCompatActivity {
     private int currentSymbol;
     private int userSymbol;
     private int mode;
-
-
+    private int chessboardSize;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,18 +90,19 @@ public class MainActivity extends AppCompatActivity {
         currentSymbol = BLACK;
         userSymbol = BLACK;
         mode = HUMAN_VS_ROBOT;
+        chessboardSize = 25;
 
         initChessboard();
         initImageViews(imageViewList, CELL_LIST);
         initResetButton();
         initSwitch();
 
-        robot1 = new Robot("Robot1", WHITE, 5);
-        robot2 = new Robot("Robot2", BLACK, 5);
+        robot1 = new Robot("Robot1", WHITE, chessboardSize);
+        robot2 = new Robot("Robot2", BLACK, chessboardSize);
     }
 
     private void initChessboard() {
-        for(int i = 0; i < 25; i++)
+        for(int i = 0; i < chessboardSize; i++)
             chessboard[i] = BLANK;
     }
 
@@ -123,13 +122,13 @@ public class MainActivity extends AppCompatActivity {
                         clickedView.setImageResource
                                 ((userSymbol == BLACK)? DRAW_BLACK : DRAW_WHITE);
                         chessboard[clickedView.getIndex()] = userSymbol;
-                        if(robot1.judge(chessboard) == USER_WIN) {
+                        if(robot1.judge(chessboard, userSymbol) == WIN) {
                             Toast.makeText(MainActivity.this, "User Win!",
                                     Toast.LENGTH_SHORT).show();
                             finish = true;
                         }
                         changeCurrentSymbol();
-                        if(!finish) {
+                        if(!finish && currentSymbol == WHITE) {
                             robotClick(robot1, robot1.getSymbol());
                             changeCurrentSymbol();
                         }
@@ -140,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void clearChessboard(int[] chessboard, MyImageView[] imageViews) {
-        for(int i = 0; i < 25; i++) {
+        for(int i = 0; i < chessboardSize; i++) {
             chessboard[i] = BLANK;
             imageViews[i].setImageResource(DRAW_BLANK);
         }
@@ -175,10 +174,10 @@ public class MainActivity extends AppCompatActivity {
         blackFirstSwitch.setChecked(true);
     }
 
-    public void robotClick(Robot robot, int symbol) {
+    private void robotClick(Robot robot, int symbol) {
         int DRAW_TYPE = (symbol == WHITE)? DRAW_WHITE : DRAW_BLACK;
-        int nextStep = robot.DFS(symbol, chessboard, robot.getDepth());
-        if(nextStep >= 0) {
+        int nextStep = robot.placeNextPiece(symbol, chessboard);
+        if(nextStep != NOT_FOUND) {
             MyImageView updateImageView =
                     (MyImageView) findViewById
                             (MainActivity.CELL_LIST[nextStep]);
@@ -186,9 +185,9 @@ public class MainActivity extends AppCompatActivity {
             chessboard[nextStep] = symbol;
         }
 
-        int result = robot.judge(chessboard);
+        int result = robot.judge(chessboard, robot.getSymbol());
         switch(result) {
-            case USER_LOSS:
+            case WIN:
                 Toast.makeText(MainActivity.this, robot.getName() + " Win!",
                         Toast.LENGTH_SHORT).show();
                 finish = true;
@@ -205,15 +204,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public int getCurrentSymbol() {
-        return currentSymbol;
-    }
-
-    public void changeCurrentSymbol() {
+    private void changeCurrentSymbol() {
         currentSymbol = currentSymbol == WHITE? BLACK : WHITE;
     }
 
-    public boolean getFinish() {
-        return finish;
-    }
 }
