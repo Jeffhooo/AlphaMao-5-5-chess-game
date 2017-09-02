@@ -53,8 +53,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int CELL_23 = R.id.cell_23;
     private static final int CELL_24 = R.id.cell_24;
 
-    private static final int RESET = R.id.reset;
-
     private static final int UPDATE_CHESSBOARD = 100;
     private static final int SHOW_RESULT = 101;
 
@@ -128,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
                         default:
                             break;
                     }
+
                 default:
                     break;
             }
@@ -152,17 +151,14 @@ public class MainActivity extends AppCompatActivity {
         initButton();
         initSwitch();
 
-        robot1 = new Robot("Robot1", WHITE, chessboardSize, mode);
-//        robot1Thread = getRobotThread(robot1);
-
-        robot2 = new Robot("Robot2", BLACK, chessboardSize, mode);
-//        robot2Thread = getRobotThread(robot2);
-
+        robot1 = new Robot("Robot1", WHITE, mode);
+        robot2 = new Robot("Robot2", BLACK, mode);
     }
 
     private void initChessboard() {
-        for(int i = 0; i < chessboardSize; i++)
-            chessboard[i] = BLANK;
+        for(int i = 0; i < chessboardSize; i++) {
+            changeChessBoard(i, BLANK);
+        }
     }
 
     private void initImageViews(MyImageView[] imageViews, int[] CELLS) {
@@ -193,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initButton() {
-        resetButton = (Button) findViewById(RESET);
+        resetButton = (Button) findViewById(R.id.reset);
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -258,8 +254,6 @@ public class MainActivity extends AppCompatActivity {
                 mode = modeSwitch.isChecked()? HUMAN_VS_ROBOT : ROBOT_VS_ROBOT;
             }
         });
-
-
     }
 
     private void recordPieceIndex(int pieceIndex){
@@ -282,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
                 while(!finish) {
                     int robotSymbol = robot.getSymbol();
                     if(currentSymbol == robotSymbol) {
-                        int result = robot.judge
+                        int result = Robot.judge
                                 (chessboard, robotSymbol == BLACK? WHITE : BLACK);
                         if(result != NOT_SURE) {
                             finish = true;
@@ -296,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
                                 changeChessBoard(nextStep, robotSymbol);
                             }
 
-                            result = robot.judge(chessboard, robotSymbol);
+                            result = Robot.judge(chessboard, robotSymbol);
                             if(result != NOT_SURE) {
                                 finish = true;
                                 sendMessage(SHOW_RESULT, result, 0);
