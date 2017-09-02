@@ -1,14 +1,10 @@
 package com.jeff.alphamao;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
-
-import static android.os.SystemClock.sleep;
-
 
 /**
  * Created by jeff on 17-5-29.
@@ -35,7 +31,6 @@ public class Robot {
 
     private String name;
     private int symbol;
-    private int chessboardSize;
     private LinkedList<Recorder> recorders;
     private Recorder currentRecorder;
     private boolean isBlackFirst;
@@ -43,10 +38,9 @@ public class Robot {
     private int mode;
 
 
-    public Robot(String name, int symbol, int chessboardSize, int mode) {
+    public Robot(String name, int symbol, int mode) {
         this.name = name;
         this.symbol = symbol;
-        this.chessboardSize = chessboardSize;
         this.recorders = new LinkedList<>();
         this.step = 0;
         this.mode = mode;
@@ -57,6 +51,7 @@ public class Robot {
             try {
                 Thread.sleep(300);
             } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
 
@@ -65,9 +60,7 @@ public class Robot {
         ++step;
 
         if((nextPiece = searchPieceCanWin(chessboard, symbol))
-                != NOT_FOUND) {
-            return nextPiece;
-        }
+                != NOT_FOUND) return nextPiece;
 
         else if((nextPiece = searchPieceCanWin(chessboard, theOtherSymbol))
                 != NOT_FOUND) return nextPiece;
@@ -75,22 +68,23 @@ public class Robot {
         else if((nextPiece = tryToPickTheBestPiece(chessboard, symbol))
                 != NOT_FOUND) return nextPiece;
 
-
         return nextPiece;
     }
 
-    public int judge(int[] chessboard, int symbol) {
+    public static int judge(int[] chessboard, int symbol) {
         if(isWin(symbol, chessboard)) {
             return symbol == BLACK? BLACK_WIN : WHITE_WIN;
         }
-        for(int i = 0; i < chessboardSize; i++) {
+
+        for(int i = 0; i < 25; i++) {
             if(chessboard[i] == BLANK) break;
-            if(i == chessboardSize-1) return DRAW;
+            if(i == 24) return DRAW;
         }
+
         return NOT_SURE;
     }
 
-    private boolean isWin(int symbol, int[] chessboard) {
+    private static boolean isWin(int symbol, int[] chessboard) {
 
         for(int i = 0; i < 5; i++) {
             int row = i*5;
@@ -130,7 +124,8 @@ public class Robot {
 
     private int searchPieceCanWin(int[] chessboard, int symbol){
         int piece = NOT_FOUND;
-        for(int i = 0; i < chessboardSize; i++) {
+
+        for(int i = 0; i < 25; i++) {
             if(chessboard[i] == BLANK) {
                 chessboard[i] = symbol;
                 int[] copyChessboard = chessboard.clone();
@@ -141,6 +136,7 @@ public class Robot {
                 chessboard[i] = BLANK;
             }
         }
+
         return piece;
     }
 
@@ -148,7 +144,8 @@ public class Robot {
         int nextPiece = NOT_FOUND;
         int bestScore = -1;
         ArrayList<Integer> bestPieces = new ArrayList<>();
-        for(int i = 0; i < chessboardSize; i++) {
+
+        for(int i = 0; i < 25; i++) {
             if(chessboard[i] == BLANK) {
                 int score = calculatePieceScore(chessboard, i, symbol);
                 if(score == bestScore) {
@@ -162,6 +159,7 @@ public class Robot {
         }
 
         int size = bestPieces.size();
+
         if(size > 0) {
             Random random = new Random();
             nextPiece = bestPieces.get(random.nextInt(size));
@@ -175,8 +173,8 @@ public class Robot {
         int score = 0;
         int rowFirstIndex = (pieceIndex/5)*5;
         int col = pieceIndex-rowFirstIndex;
-
         int symbolCounter = 0;
+
         for(int i = 0; i < 5; i++) {
             int temp = chessboard[rowFirstIndex+i];
             if(temp == theOtherSymbol) break;
@@ -217,6 +215,7 @@ public class Robot {
                 }
             }
         }
+
         return score;
     }
 
@@ -230,10 +229,12 @@ public class Robot {
 
     public void record(int pieceIndex) {
         Recorder temp = currentRecorder.find(pieceIndex);
+
         if(temp == null) {
             temp = new Recorder(pieceIndex);
             currentRecorder.put(temp);
         }
+
         currentRecorder = temp;
     }
 
