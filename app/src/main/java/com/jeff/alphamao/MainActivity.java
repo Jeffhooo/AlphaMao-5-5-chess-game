@@ -24,10 +24,6 @@ public class MainActivity extends AppCompatActivity
     private static final int DRAW = -4;
     private static final int NOT_FOUND = -5;
 
-    private static final int RECORD_FIRST_WIN = -6;
-    private static final int RECORD_FIRST_LOSS = -7;
-    private static final int RECORD_NOT_SURE = -8;
-
     private static final int CELL_0 = R.id.cell_0;
     private static final int CELL_1 = R.id.cell_1;
     private static final int CELL_2 = R.id.cell_2;
@@ -60,10 +56,8 @@ public class MainActivity extends AppCompatActivity
     private static final int GREEDY = 200;
     private static final int DFS = 201;
 
-    private final int DRAW_BLANK  = R.drawable.blank;
-    private final int DRAW_BLACK  = R.drawable.black;
-    private final int DRAW_WHITE  = R.drawable.white;
-
+    private static final int HUMAN_VS_ROBOT = -10;
+    private static final int ROBOT_VS_ROBOT = -11;
 
     private static final int[] CELL_LIST
             = {CELL_0, CELL_1, CELL_2, CELL_3, CELL_4,
@@ -72,9 +66,6 @@ public class MainActivity extends AppCompatActivity
                CELL_15, CELL_16, CELL_17, CELL_18, CELL_19,
                CELL_20, CELL_21, CELL_22, CELL_23, CELL_24};
 
-    private static final int HUMAN_VS_ROBOT = -10;
-    private static final int ROBOT_VS_ROBOT = -11;
-
     private MyImageView[] imageViewList;
     private Button startButton;
     private Button resetButton;
@@ -82,21 +73,19 @@ public class MainActivity extends AppCompatActivity
     private Switch modeSwitch;
     private Switch robot1ModeSwitch;
     private Switch robot2ModeSwitch;
+
     private int[] chessboard;
     private Robot robot1;
     private Robot robot2;
     private Thread robot1Thread;
     private Thread robot2Thread;
-
     private boolean finish;
-
     private int currentSymbol;
     private int userSymbol;
     private int mode;
     private int robot1Mode;
     private int robot2Mode;
     private int chessboardSize;
-    private StringBuilder recorder;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -107,7 +96,7 @@ public class MainActivity extends AppCompatActivity
                     int symbol = msg.arg2;
                     MyImageView clickedView = imageViewList[pieceIndex];
                     clickedView.setImageResource
-                            ((symbol == BLACK)? DRAW_BLACK : DRAW_WHITE);
+                            ((symbol == BLACK)? R.drawable.black : R.drawable.white);
                     break;
 
                 case SHOW_RESULT:
@@ -154,7 +143,6 @@ public class MainActivity extends AppCompatActivity
         robot1Mode = GREEDY;
         robot2Mode = GREEDY;
         chessboardSize = 25;
-        recorder = new StringBuilder();
 
         initChessboard();
         initImageViews(imageViewList, CELL_LIST);
@@ -209,7 +197,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.reset:
                 for(int i = 0; i < chessboardSize; i++) {
                     chessboard[i] = BLANK;
-                    imageViewList[i].setImageResource(DRAW_BLANK);
+                    imageViewList[i].setImageResource(R.drawable.blank);
                 }
                 finish = true;
                 break;

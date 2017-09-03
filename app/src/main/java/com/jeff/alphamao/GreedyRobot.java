@@ -12,7 +12,6 @@ public class GreedyRobot extends Robot{
 
     private String name;
     private int symbol;
-    private Recorder currentRecorder;
 
     public GreedyRobot(String name, int symbol) {
         this.name = name;
@@ -134,22 +133,7 @@ public class GreedyRobot extends Robot{
         return score;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public int getSymbol() {
         return symbol;
-    }
-
-    public void record(int pieceIndex) {
-        Recorder temp = currentRecorder.find(pieceIndex);
-
-        if(temp == null) {
-            temp = new Recorder(pieceIndex);
-            currentRecorder.put(temp);
-        }
-
-        currentRecorder = temp;
     }
 }

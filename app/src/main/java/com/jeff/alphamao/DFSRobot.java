@@ -11,7 +11,6 @@ public class DFSRobot extends GreedyRobot{
 
     private String name;
     private int symbol;
-    private Recorder currentRecorder;
     private int depth;
 
     public DFSRobot(String name, int symbol, int depth) {
@@ -91,23 +90,8 @@ public class DFSRobot extends GreedyRobot{
         }
     }
 
-    public String getName() {
-        return name;
-    }
-
     public int getSymbol() {
         return symbol;
-    }
-
-    public void record(int pieceIndex) {
-        Recorder temp = currentRecorder.find(pieceIndex);
-
-        if(temp == null) {
-            temp = new Recorder(pieceIndex);
-            currentRecorder.put(temp);
-        }
-
-        currentRecorder = temp;
     }
 
     public int getDepth() { return this.depth; }

@@ -22,13 +22,6 @@ public abstract class Robot {
     public static final int DRAW = -4;
     public static final int NOT_FOUND = -5;
 
-    public static final int RECORD_FIRST_WIN = -6;
-    public static final int RECORD_FIRST_LOSS = -7;
-    public static final int RECORD_NOT_SURE = -8;
-
-    public static final int HUMAN_VS_ROBOT = -10;
-    public static final int ROBOT_VS_ROBOT = -11;
-
     abstract public int placeNextPiece(int symbol, int[] chessboard);
 
     abstract int getSymbol();
