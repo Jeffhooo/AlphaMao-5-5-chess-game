@@ -152,23 +152,30 @@
 
 </TableLayout>
 
-    <Button
-        android:id="@+id/start"
+    <LinearLayout
+        android:paddingTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="start"/>
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="start"/>
 
-    <Button
-        android:id="@+id/reset"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="reset"
-        />
+        <Button
+            android:id="@+id/reset"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="reset"
+            />
+    </LinearLayout>
 
     <Switch
         android:id="@+id/black_first"
+        android:paddingTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Black First "
@@ -177,9 +184,28 @@
 
     <Switch
         android:id="@+id/mode"
+        android:paddingTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Mode: Robot vs Robot / Human vs Robot"
+        android:layout_gravity="end"
+        android:textAlignment="textEnd"/>
+
+    <Switch
+        android:id="@+id/robot1_mode"
+        android:paddingTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Robot1 Mode: Greedy / DFS"
+        android:layout_gravity="end"
+        android:textAlignment="textEnd"/>
+
+    <Switch
+        android:id="@+id/robot2_mode"
+        android:paddingTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Robot2 Mode: Greedy / DFS"
         android:layout_gravity="end"
         android:textAlignment="textEnd"/>
 

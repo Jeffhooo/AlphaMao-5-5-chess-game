@@ -11,7 +11,8 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements View.OnClickListener, CompoundButton.OnCheckedChangeListener{
 
     private static final int BLANK = 0;
     private static final int BLACK = 3;
@@ -56,6 +57,9 @@ public class MainActivity extends AppCompatActivity {
     private static final int UPDATE_CHESSBOARD = 100;
     private static final int SHOW_RESULT = 101;
 
+    private static final int GREEDY = 200;
+    private static final int DFS = 201;
+
     private final int DRAW_BLANK  = R.drawable.blank;
     private final int DRAW_BLACK  = R.drawable.black;
     private final int DRAW_WHITE  = R.drawable.white;
@@ -76,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
     private Button resetButton;
     private Switch blackFirstSwitch;
     private Switch modeSwitch;
+    private Switch robot1ModeSwitch;
+    private Switch robot2ModeSwitch;
     private int[] chessboard;
     private Robot robot1;
     private Robot robot2;
@@ -87,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
     private int currentSymbol;
     private int userSymbol;
     private int mode;
+    private int robot1Mode;
+    private int robot2Mode;
     private int chessboardSize;
     private StringBuilder recorder;
 
@@ -143,6 +151,8 @@ public class MainActivity extends AppCompatActivity {
         currentSymbol = BLACK;
         userSymbol = BLACK;
         mode = HUMAN_VS_ROBOT;
+        robot1Mode = GREEDY;
+        robot2Mode = GREEDY;
         chessboardSize = 25;
         recorder = new StringBuilder();
 
@@ -150,9 +160,6 @@ public class MainActivity extends AppCompatActivity {
         initImageViews(imageViewList, CELL_LIST);
         initButton();
         initSwitch();
-
-        robot1 = new Robot("Robot1", WHITE, mode);
-        robot2 = new Robot("Robot2", BLACK, mode);
     }
 
     private void initChessboard() {
@@ -190,79 +197,126 @@ public class MainActivity extends AppCompatActivity {
 
     private void initButton() {
         resetButton = (Button) findViewById(R.id.reset);
-        resetButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        resetButton.setOnClickListener(this);
+
+        startButton = (Button) findViewById(R.id.start);
+        startButton.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.reset:
                 for(int i = 0; i < chessboardSize; i++) {
                     chessboard[i] = BLANK;
                     imageViewList[i].setImageResource(DRAW_BLANK);
                 }
                 finish = true;
-            }
-        });
+                break;
 
-        startButton = (Button) findViewById(R.id.start);
-        startButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            case R.id.start:
                 if(finish) {
                     currentSymbol = blackFirstSwitch.isChecked()? BLACK : WHITE;
                     mode = modeSwitch.isChecked()? HUMAN_VS_ROBOT : ROBOT_VS_ROBOT;
                     finish = false;
                     switch (mode) {
                         case HUMAN_VS_ROBOT:
-                            robot1.setMode(HUMAN_VS_ROBOT);
-                            robot1Thread = getRobotThread(robot1);
-                            robot1Thread.start();
+                            switch (robot1Mode) {
+                                case GREEDY:
+                                    robot1 = new GreedyRobot("Robot1", WHITE);
+                                    break;
+
+                                case DFS:
+                                    robot1 = new DFSRobot("Robot1", WHITE, 2);
+                                    break;
+                            }
+
+                            if(robot1 != null) {
+                                robot1Thread = getRobotThread(robot1);
+                                robot1Thread.start();
+                            }
                             break;
 
                         case ROBOT_VS_ROBOT:
-                            robot1.setMode(ROBOT_VS_ROBOT);
-                            robot2.setMode(ROBOT_VS_ROBOT);
-                            robot1Thread = getRobotThread(robot1);
-                            robot2Thread = getRobotThread(robot2);
-                            robot1Thread.start();
-                            robot2Thread.start();
+                            switch (robot1Mode) {
+                                case GREEDY:
+                                    robot1 = new GreedyRobot("Robot1", WHITE);
+                                    break;
+
+                                case DFS:
+                                    robot1 = new DFSRobot("Robot1", WHITE, 2);
+                                    break;
+                            }
+
+                            switch (robot2Mode) {
+                                case GREEDY:
+                                    robot2 = new GreedyRobot("Robot2", BLACK);
+                                    break;
+
+                                case DFS:
+                                    robot2 = new DFSRobot("Robot2", BLACK, 2);
+                                    break;
+                            }
+
+                            if(robot1 != null && robot2 != null) {
+                                robot1Thread = getRobotThread(robot1);
+                                robot2Thread = getRobotThread(robot2);
+                                robot1Thread.start();
+                                robot2Thread.start();
+                            }
                             break;
 
                         default:
                             break;
                     }
                 }
-            }
-        });
+                break;
+
+            default:
+                break;
+        }
     }
 
     private void initSwitch() {
         blackFirstSwitch = (Switch) findViewById(R.id.black_first);
-        blackFirstSwitch.setOnCheckedChangeListener
-                (new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged
-                    (CompoundButton buttonView, boolean isChecked) {
-                currentSymbol = blackFirstSwitch.isChecked()? BLACK : WHITE;
-            }
-        });
+        blackFirstSwitch.setOnCheckedChangeListener(this);
         blackFirstSwitch.setChecked(true);
 
         modeSwitch = (Switch) findViewById(R.id.mode);
-        modeSwitch.setOnCheckedChangeListener
-                (new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged
-                    (CompoundButton buttonView, boolean isChecked) {
+        modeSwitch.setOnCheckedChangeListener(this);
+        modeSwitch.setChecked(true);
+
+        robot1ModeSwitch = (Switch) findViewById(R.id.robot1_mode);
+        robot1ModeSwitch.setOnCheckedChangeListener(this);
+        robot1ModeSwitch.setChecked(false);
+
+        robot2ModeSwitch = (Switch) findViewById(R.id.robot2_mode);
+        robot2ModeSwitch.setOnCheckedChangeListener(this);
+        robot2ModeSwitch.setChecked(false);
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        switch (buttonView.getId()) {
+            case R.id.black_first:
+                currentSymbol = blackFirstSwitch.isChecked()? BLACK : WHITE;
+                break;
+
+            case R.id.mode:
                 mode = modeSwitch.isChecked()? HUMAN_VS_ROBOT : ROBOT_VS_ROBOT;
-            }
-        });
-    }
+                break;
 
-    private void recordPieceIndex(int pieceIndex){
-        recorder.append(" " + pieceIndex);
-    }
+            case R.id.robot1_mode:
+                robot1Mode = robot1ModeSwitch.isChecked()? DFS : GREEDY;
+                break;
 
-    private void recordResult(boolean isFirstWin){
-        String res = isFirstWin? "Win" : "Loss";
-        recorder.append(" " + res);
+            case R.id.robot2_mode:
+                robot2Mode = robot2ModeSwitch.isChecked()? DFS : GREEDY;
+                break;
+
+            default:
+                break;
+        }
     }
 
     private synchronized void changeCurrentSymbol() {
@@ -284,6 +338,13 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         if(!finish) {
+                            if(mode == ROBOT_VS_ROBOT) {
+                                try {
+                                    Thread.sleep(300);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
                             int nextStep = robot.placeNextPiece(robotSymbol, chessboard);
                             if (nextStep != NOT_FOUND) {
                                 sendMessage(UPDATE_CHESSBOARD, nextStep, robotSymbol);
