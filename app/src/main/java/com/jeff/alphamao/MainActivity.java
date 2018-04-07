@@ -1,5 +1,8 @@
 package com.jeff.alphamao;
 
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +13,9 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity
         implements View.OnClickListener, CompoundButton.OnCheckedChangeListener{
@@ -87,16 +93,21 @@ public class MainActivity extends AppCompatActivity
     private int robot2Mode;
     private int chessboardSize;
 
+    private SoundPool soundPool;
+    private HashMap<String, Integer> poolMap;
+
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case UPDATE_CHESSBOARD:
+                    soundPool.play(poolMap.get("sound_b"), 1.0f, 1.0f, 0, 0, 1.0f);
                     int pieceIndex = msg.arg1;
                     int symbol = msg.arg2;
                     MyImageView clickedView = imageViewList[pieceIndex];
                     clickedView.setImageResource
                             ((symbol == BLACK)? R.drawable.black : R.drawable.white);
+
                     break;
 
                 case SHOW_RESULT:
@@ -148,6 +159,23 @@ public class MainActivity extends AppCompatActivity
         initImageViews(imageViewList, CELL_LIST);
         initButton();
         initSwitch();
+        initSoundPool();
+    }
+
+    private void initSoundPool() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            soundPool = new SoundPool.Builder()
+                    .setMaxStreams(5)
+                    .build();
+        } else {
+            soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 1);
+        }
+        poolMap = new HashMap<>();
+        poolMap.put("sound_a" , soundPool.load(this, R.raw.sound_a, 1));
+        poolMap.put("sound_b" , soundPool.load(this, R.raw.sound_b, 1));
+        poolMap.put("sound_c" , soundPool.load(this, R.raw.sound_c, 1));
+        poolMap.put("sound_d" , soundPool.load(this, R.raw.sound_d, 1));
+        poolMap.put("sound_e" , soundPool.load(this, R.raw.sound_e, 1));
     }
 
     private void initChessboard() {
